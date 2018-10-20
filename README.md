@@ -11,6 +11,7 @@
   * SSLstrip2 for HSTS bypass<br>
   * Image capture with Driftnet<br>
   * TShark for command line .pcap capture<br>
+  * Deauth the AP with just enter the BSSI of the existing AP<br>
 
 # features:
   * SSLstrip2<br>
@@ -21,14 +22,16 @@
   * Wireshark<br>
   * DNS Spoofing<br>
   * Saving results to file<br>
+  * Deauth the original AP during the Attack
 
 # requirements:
   Kali Linux / Raspbian with root privileges<br>
+  the aireplay-ng to deauth the existing AP<br>
   A wireless card and an ethernet adapter / 2 wireless card<br>
   Python3 (mitmAP will install the dependenices, you don't have to do it)
 
 # downloading:
-  <h3>"git clone https://github.com/xdavidhu/mitmAP"</h3>
+  <h3>"git clone https://github.com/bavxhack/mitmAP"</h3>
 
 # starting:
   * Kali Linux -> "sudo python3 mitmAP.py"<br>
